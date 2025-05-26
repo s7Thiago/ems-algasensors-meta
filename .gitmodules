@@ -1,9 +1,0 @@
-[submodule "microsservices/temperarute-monitoring"]
-	path = microsservices/temperarute-monitoring
-	url = https://github.com/s7Thiago/ems-algasensors-temperarute-monitoring.git
-[submodule "microsservices/temperarute-processing"]
-	path = microsservices/temperarute-processing
-	url = https://github.com/s7Thiago/ems-algasensors-temperarute-processing.git
-[submodule "microsservices/temperarute-management"]
-	path = microsservices/temperarute-management
-	url = https://github.com/s7Thiago/ems-algasensors-temperarute-management.git

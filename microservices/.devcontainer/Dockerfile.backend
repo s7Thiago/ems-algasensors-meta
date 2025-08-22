@@ -1,0 +1,42 @@
+FROM eclipse-temurin:21-jdk-jammy
+# FROM openjdk:21-slim-bullseye # Tem vulnerabilidades conhecidas
+
+LABEL maintainer="Thiago Silva"
+LABEL email="thyagosousasilva@gmail.com"
+
+RUN apt-get update && \
+    apt-get install -y \
+    maven git python3 curl \
+    lsof iputils-ping htop telnet \
+    zsh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Definir zsh como shell padrão
+RUN chsh -s $(which zsh)
+
+# Opcional: Instalar Oh My Zsh
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Definir variáveis de ambiente
+# Definir zsh como shell padrão para o usuário root
+ENV SHELL=/bin/zsh
+ENV ZSH=/root/.oh-my-zsh
+
+# Copiar configuração personalizada do zsh
+COPY .devcontainer/.zshrc /root/.zshrc
+
+# Instalar plugins populares do zsh
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /root/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions /root/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
+ENV JAVA_OPTS="-Duser.timezone=UTC"
+
+WORKDIR /workspace
+
+EXPOSE 8080
+
+# Usar zsh como comando padrão
+# CMD ["/bin/zsh"]
+
+CMD [ "tail", "-f", "/dev/null" ]

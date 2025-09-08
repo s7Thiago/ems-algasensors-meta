@@ -7,6 +7,12 @@ networks:
 volumes:
   maven-cache:
     driver: local
+  gradle-cache:  # NOVO: Cache do Gradle
+    driver: local
+  vscode-extensions:  # NOVO: Cache das extensões VS Code
+    driver: local
+  gradle-wrapper-cache:  # NOVO: Cache do Gradle Wrapper
+    driver: local
 
 services:
   backend:
@@ -18,16 +24,21 @@ services:
     networks:
       - temperature_monitoring_net
     ports:
+      - "8080:8080"
+      - "8081:8081"
       - "8082:8082"
     env_file:
       - .env
     volumes:
-      - ../:/workspace # Montar o código para desenvolvimento no container
-      - maven-cache:/root/.m2 # Cache do maven para não baixar as dependências toda vez
-      # - ./root-data:/root/ # volume para o .zshrc
+      - ../:/workspace
+      - maven-cache:/root/.m2
+      # NOVOS VOLUMES para cache
+      - gradle-cache:/root/.gradle  # Cache principal do Gradle
+      - gradle-wrapper-cache:/root/.gradle/wrapper  # Cache do wrapper
+      - vscode-extensions:/root/.vscode-server  # Extensions do VS Code
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "5"
-    command: ["sh", "-c", "trap 'docker-compose stop' EXIT; while :; do sleep 1; done"] # Manter o container em execução
+    command: ["sh", "-c", "trap 'docker-compose stop' EXIT; while :; do sleep 1; done"]

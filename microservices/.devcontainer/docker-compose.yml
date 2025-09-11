@@ -1,18 +1,13 @@
-version: '3.1'
-
 networks:
   temperature_monitoring_net:
     driver: bridge
 
 volumes:
   maven-cache:
-    driver: local
-  gradle-cache:  # NOVO: Cache do Gradle
-    driver: local
-  vscode-extensions:  # NOVO: Cache das extensões VS Code
-    driver: local
-  gradle-wrapper-cache:  # NOVO: Cache do Gradle Wrapper
-    driver: local
+  gradle-cache:
+  vscode-extensions:
+  gradle-wrapper-cache:
+  algasensors-rabbitmq:
 
 services:
   backend:
@@ -21,6 +16,8 @@ services:
       dockerfile: .devcontainer/Dockerfile.backend
     container_name: temperature-processing-api
     image: s7thiago/temperature-processing-api:latest
+    depends_on:
+      - rabbitmq
     networks:
       - temperature_monitoring_net
     ports:
@@ -42,3 +39,16 @@ services:
         max-size: "10m"
         max-file: "5"
     command: ["sh", "-c", "trap 'docker-compose stop' EXIT; while :; do sleep 1; done"]
+  
+  rabbitmq:
+    image: rabbitmq:3-management # essa versão tem a UI de gerenciamento
+    restart: no
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      - .env
+    volumes: # guardar as infos das filas e exchanges
+      - algasensors-rabbitmq:/var/lib/rabbitmq/
+    networks:
+      - temperature_monitoring_net

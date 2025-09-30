@@ -49,6 +49,6 @@ services:
     env_file:
       - .env
     volumes: # guardar as infos das filas e exchanges
-      - algasensors-rabbitmq:/var/lib/rabbitmq/
+      - algasensors-rabbitmq:/var/lib/rabbitmq
     networks:
       - temperature_monitoring_net
